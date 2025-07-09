@@ -1,36 +1,75 @@
-# psprofile
-This project is a bundle of PowerShell Profiles customized to add several systems administration functions
-The intent is to simplify my systems administration tasks with PowerShell by turning frequently used scripts into functions that are automatically loaded each time I launch PowerShell, thus I can call the functions as needed.
-Depending on version of PowerShell, the following profiles must be placed at the proper locations such as:
-($profile | select *)
-PowerShell 5.1:
-AllUsersAllHosts       : C:\Windows\System32\WindowsPowerShell\v1.0\profile.ps1
-AllUsersCurrentHost    : C:\Windows\System32\WindowsPowerShell\v1.0\Microsoft.PowerShell_profile.ps1
-CurrentUserAllHosts    : C:\Users\roger\Documents\WindowsPowerShell\profile.ps1
-CurrentUserCurrentHost : C:\Users\roger\Documents\WindowsPowerShell\Microsoft.PowerShell_profile.ps1
+# PowerShell Profiles
 
-ISE:
-AllUsersAllHosts       : C:\Windows\System32\WindowsPowerShell\v1.0\profile.ps1
-AllUsersCurrentHost    : C:\Windows\System32\WindowsPowerShell\v1.0\Microsoft.PowerShellISE_profile.ps1
-CurrentUserAllHosts    : C:\Users\roger\Documents\WindowsPowerShell\profile.ps1
-CurrentUserCurrentHost : C:\Users\roger\Documents\WindowsPowerShell\Microsoft.PowerShellISE_profile.ps1
+A collection of customized PowerShell profiles designed to streamline systems administration tasks by providing commonly used functions and tools automatically loaded at startup.
 
-PowerShell 7:
+## Overview
 
-AllUsersAllHosts       : C:\Program Files\PowerShell\7-preview\profile.ps1
-AllUsersCurrentHost    : C:\Program Files\PowerShell\7-preview\Microsoft.PowerShell_profile.ps1
-CurrentUserAllHosts    : C:\Users\roger\Documents\PowerShell\profile.ps1
-CurrentUserCurrentHost : C:\Users\roger\Documents\PowerShell\Microsoft.PowerShell_profile.ps1
+This repository contains PowerShell profiles that transform frequently used scripts into functions that are automatically available whenever you launch PowerShell. Instead of manually loading scripts or remembering complex commands, you can simply call these functions as needed.
 
-VSCode:
-AllUsersAllHosts       : C:\Program Files\PowerShell\7-preview\profile.ps1
-AllUsersCurrentHost    : C:\Program Files\PowerShell\7-preview\Microsoft.VSCode_profile.ps1
-CurrentUserAllHosts    : C:\Users\roger\Documents\PowerShell\profile.ps1
-CurrentUserCurrentHost : C:\Users\roger\Documents\PowerShell\Microsoft.VSCode_profile.ps1
+## Installation
 
-Also, there will be some minor environment specific customization/adjustments required to make the profile work in your environment.
-Currently they are tailored to my homelab where everything is joined to the "myhomelab.lab" domain,should be simple to search and replace all myhomelab specific by your ouwn domain or environment to make the profiles work for you
+### Profile Locations
 
-Do not hesitate to make improvenents, suggestions, report issues etc ...
+PowerShell profiles must be placed in specific locations depending on your PowerShell version and host application. Use `$profile | select *` to view the available profile paths on your system.
 
+#### PowerShell 5.1
+- **AllUsersAllHosts**: `C:\Windows\System32\WindowsPowerShell\v1.0\profile.ps1`
+- **AllUsersCurrentHost**: `C:\Windows\System32\WindowsPowerShell\v1.0\Microsoft.PowerShell_profile.ps1`
+- **CurrentUserAllHosts**: `C:\Users\<username>\Documents\WindowsPowerShell\profile.ps1`
+- **CurrentUserCurrentHost**: `C:\Users\<username>\Documents\WindowsPowerShell\Microsoft.PowerShell_profile.ps1`
 
+#### PowerShell ISE
+- **AllUsersAllHosts**: `C:\Windows\System32\WindowsPowerShell\v1.0\profile.ps1`
+- **AllUsersCurrentHost**: `C:\Windows\System32\WindowsPowerShell\v1.0\Microsoft.PowerShellISE_profile.ps1`
+- **CurrentUserAllHosts**: `C:\Users\<username>\Documents\WindowsPowerShell\profile.ps1`
+- **CurrentUserCurrentHost**: `C:\Users\<username>\Documents\WindowsPowerShell\Microsoft.PowerShellISE_profile.ps1`
+
+#### PowerShell 7
+- **AllUsersAllHosts**: `C:\Program Files\PowerShell\7\profile.ps1`
+- **AllUsersCurrentHost**: `C:\Program Files\PowerShell\7\Microsoft.PowerShell_profile.ps1`
+- **CurrentUserAllHosts**: `C:\Users\<username>\Documents\PowerShell\profile.ps1`
+- **CurrentUserCurrentHost**: `C:\Users\<username>\Documents\PowerShell\Microsoft.PowerShell_profile.ps1`
+
+#### Visual Studio Code
+- **AllUsersAllHosts**: `C:\Program Files\PowerShell\7\profile.ps1`
+- **AllUsersCurrentHost**: `C:\Program Files\PowerShell\7\Microsoft.VSCode_profile.ps1`
+- **CurrentUserAllHosts**: `C:\Users\<username>\Documents\PowerShell\profile.ps1`
+- **CurrentUserCurrentHost**: `C:\Users\<username>\Documents\PowerShell\Microsoft.VSCode_profile.ps1`
+
+## Configuration
+
+### Environment Customization
+
+These profiles are currently configured for a homelab environment using domain naming conventions:
+- `myhomelab.hv.lab` for Hyper-V based environments
+- `myhomelab.vm.lab` for VMware based environments
+
+To adapt them for your environment:
+
+1. Search for all instances of `myhomelab.hv.lab` and `myhomelab.vm.lab` in the profile files
+2. Replace with your domain name or environment-specific values
+3. Review and adjust any other environment-specific settings as needed
+
+### Getting Started
+
+1. Clone this repository
+2. Choose the appropriate profile file for your PowerShell version and use case
+3. Copy the profile to the correct location (create directories if they don't exist)
+4. Customize domain and environment-specific settings
+5. Restart PowerShell to load the new profile
+
+## Contributing
+
+Contributions are welcome! Please feel free to:
+- Submit improvements and enhancements
+- Report issues or bugs
+- Suggest new features or functions
+- Share your own useful administration functions
+
+## Support
+
+Provided AS IS.
+
+---
+
+*These profiles are designed to make PowerShell administration more efficient by providing instant access to commonly used functions and tools.*
