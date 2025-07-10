@@ -50,13 +50,24 @@ To adapt them for your environment:
 2. Replace with your domain name or environment-specific values
 3. Review and adjust any other environment-specific settings as needed
 
+### User-Specific Settings
+
+⚠️ **Important**: Before using these profiles, you must customize the following placeholders:
+
+- **Email addresses**: Replace `user@example.com` with your actual email address
+- **Usernames**: Replace `uzrg` with your actual username or identifier
+- **Repository URLs**: Update any hardcoded repository URLs to match your repositories
+
+These placeholders are used throughout the profiles for Git configuration, SSH setup, and other user-specific operations.
+
 ### Getting Started
 
 1. Clone this repository
 2. Choose the appropriate profile file for your PowerShell version and use case
-3. Copy the profile to the correct location (create directories if they don't exist)
+3. **Customize user-specific settings** (emails, usernames, repository URLs)
 4. Customize domain and environment-specific settings
-5. Restart PowerShell to load the new profile
+5. Copy the profile to the correct location (create directories if they don't exist)
+6. Restart PowerShell to load the new profile
 
 ## Contributing
 
