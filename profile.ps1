@@ -13,8 +13,8 @@ Skips repository cloning.
 
 .NOTES
     Version: 3.3.0
-    Developer: uzrg
-    DISCLAIMER: Use at your own risk.
+    Author: uzrg
+    DISCLAIMER: This script is provided as is without warranty of any kind.
 #>
 
 [CmdletBinding()]
@@ -278,7 +278,7 @@ function Set-GitConfig {
         $ADUser = Get-ADInfo
         if ($ADUser) {
             if (-not $Name) { $Name = $ADUser.Name }
-            if (-not $Email) { $Email = if ($ADUser.Email) { $ADUser.Email } else { "uzrg@github.com" } }
+            if (-not $Email) { $Email = if ($ADUser.Email) { $ADUser.Email } else { "user@example.com" } }
         }
     }
 
@@ -366,7 +366,7 @@ Next steps for Jekyll development:
     }
 }
 
-function Show-SSHHelp($Email = "your-email@example.com") {
+function Show-SSHHelp($Email = "user@example.com") {
     Write-Host @"
 SSH SETUP INSTRUCTIONS:
 
