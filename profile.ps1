@@ -12,9 +12,9 @@ Forces Git reconfiguration.
 Skips repository cloning.
 
 .NOTES
-    Version: 3.3.0
-    Author: uzrg
-    DISCLAIMER: This script is provided as is without warranty of any kind.
+    Version: 3.3.1
+    Developer: uzrg
+    DISCLAIMER: Provided as is without implied warranties.
 #>
 
 [CmdletBinding()]
@@ -25,12 +25,12 @@ $Config = @{
     DevOpsPath = Join-Path -Path $HOME -ChildPath 'DevOps'
     Tools = @{
         Git = @(
-            "C:\Program Files\Git\bin\git.exe",
+            "C:\Program Files\Git\bin\git.exe", 
             "C:\Program Files (x86)\Git\bin\git.exe",
             "$env:LOCALAPPDATA\Programs\Git\bin\git.exe"
         )
         VSCode = @(
-            "C:\Program Files\Microsoft VS Code\bin\code.cmd",
+            "C:\Program Files\Microsoft VS Code\bin\code.cmd", 
             "C:\Program Files (x86)\Microsoft VS Code\bin\code.cmd",
             "$env:LOCALAPPDATA\Programs\Microsoft VS Code\bin\code.cmd"
         )
@@ -59,7 +59,7 @@ function Write-Status($Message, $Type='Info') {
 
 function Test-Tool($Name) {
     if ($InstallCache[$Name]) { return $InstallCache[$Name] }
-
+    
     # First check if tool is in PATH
     $pathTool = Get-Command $Name.ToLower() -ErrorAction SilentlyContinue
     if ($pathTool) {
@@ -69,7 +69,7 @@ function Test-Tool($Name) {
             BinPath = [System.IO.Path]::GetDirectoryName($pathTool.Source)
             Version = $null
         }
-
+        
         # Get version info for Ruby
         if ($Name -eq 'Ruby') {
             try {
@@ -79,11 +79,11 @@ function Test-Tool($Name) {
                 }
             } catch {}
         }
-
+        
         $InstallCache[$Name] = $result
         return $result
     }
-
+    
     # Check predefined paths
     $foundPath = $Config.Tools[$Name] | Where-Object { Test-Path $_ } | Select-Object -First 1
     if ($foundPath) {
@@ -93,7 +93,7 @@ function Test-Tool($Name) {
             BinPath = [System.IO.Path]::GetDirectoryName($foundPath)
             Version = $null
         }
-
+        
         # Get version info for Ruby
         if ($Name -eq 'Ruby') {
             try {
@@ -103,11 +103,11 @@ function Test-Tool($Name) {
                 }
             } catch {}
         }
-
+        
         $InstallCache[$Name] = $result
         return $result
     }
-
+    
     return @{Found=$false; Version=$null}
 }
 
@@ -128,8 +128,8 @@ function Get-ADInfo {
             Name = $User.Name
             Email = if ($User.Mail) { $User.Mail } else { $User.EmailAddress }
         }
-    }
-    catch {
+    } 
+    catch { 
         Write-Verbose "AD lookup failed: $_"
         return $null
     }
@@ -141,7 +141,7 @@ function Test-RubyGems($RubyPath) {
         if (-not (Test-Path $gemPath)) {
             $gemPath = Join-Path -Path ([System.IO.Path]::GetDirectoryName($RubyPath)) -ChildPath 'gem'
         }
-
+        
         if (Test-Path $gemPath) {
             $gemVersion = & $gemPath --version 2>$null
             return @{
@@ -151,7 +151,7 @@ function Test-RubyGems($RubyPath) {
             }
         }
     } catch {}
-
+    
     return @{Found=$false; Version=$null}
 }
 
@@ -165,7 +165,7 @@ function Test-Jekyll($GemPath) {
             }
         }
     } catch {}
-
+    
     return @{Found=$false; Version=$null}
 }
 #endregion
@@ -181,11 +181,11 @@ Some features will be disabled. For full functionality:
 3. Rerun this script
 '@ -ForegroundColor Yellow
     }
-
+    
     try {
         $Host.UI.RawUI.WindowTitle = "PowerShell - $env:USERDOMAIN\$env:USERNAME@$env:COMPUTERNAME"
     } catch {}
-
+    
     if (-not (Test-Path $Config.DevOpsPath)) {
         $null = New-Item -ItemType Directory -Path $Config.DevOpsPath -Force
         Write-Status "Created DevOps directory: $($Config.DevOpsPath)" Success
@@ -194,21 +194,21 @@ Some features will be disabled. For full functionality:
 
 function Test-Applications {
     Write-Status "Checking required applications..."
-
+    
     $Git = Test-Tool 'Git'
     $VSCode = Test-Tool 'VSCode'
     $Ruby = Test-Tool 'Ruby'
-
+    
     # Check for missing core applications
     $missingApps = @()
     if (-not $Git.Found) { $missingApps += 'Git for Windows' }
     if (-not $VSCode.Found) { $missingApps += 'Visual Studio Code' }
-
+    
     if ($missingApps.Count -gt 0) {
         Write-Host "MISSING REQUIRED APPLICATIONS:`n$($missingApps | ForEach-Object { "- $_" })`n" -ForegroundColor Cyan
         Write-Host @"
 ACTION REQUIRED:
-1. Open Company Portal from Start Menu or web
+1. Open Company Portal from Start Menu
 2. Search for each application by name
 3. Click 'Install' for each application
 4. Wait for installations to complete
@@ -217,15 +217,15 @@ ACTION REQUIRED:
         Read-Host "Press Enter to continue" | Out-Null
         throw "Missing required applications - setup cannot continue"
     }
-
+    
     # Add core tools to PATH
     Add-ToPath $Git.BinPath
     Add-ToPath $VSCode.BinPath
-
+    
     # Check Ruby and related tools
     $RubyGems = $null
     $Jekyll = $null
-
+    
     if ($Ruby.Found) {
         Add-ToPath $Ruby.BinPath
         $RubyGems = Test-RubyGems $Ruby.Path
@@ -247,7 +247,7 @@ INSTALLATION OPTIONS:
 After installation, run: gem install jekyll bundler
 "@ -ForegroundColor Yellow
     }
-
+    
     Write-Status "Core applications verified" Success
     return @{
         Git = $Git
@@ -261,27 +261,27 @@ After installation, run: gem install jekyll bundler
 function Set-GitConfig {
     $CurrentName = git config --global user.name 2>$null
     $CurrentEmail = git config --global user.email 2>$null
-
+    
     if ($CurrentName -and $CurrentEmail -and -not $Force) {
         Write-Status "Git already configured ($CurrentName, $CurrentEmail)"
         return
     }
-
+    
     $Name = $CurrentName
     $Email = $CurrentEmail
-
+    
     if (-not $Name -or $Force) { $Name = Read-Host "Enter Git user name" }
     if (-not $Email -or $Force) { $Email = Read-Host "Enter Git email address" }
-
+    
     if ((-not $Name -or -not $Email) -and (Get-CimInstance Win32_ComputerSystem).PartOfDomain) {
         Write-Status "Checking Active Directory..."
         $ADUser = Get-ADInfo
         if ($ADUser) {
             if (-not $Name) { $Name = $ADUser.Name }
-            if (-not $Email) { $Email = if ($ADUser.Email) { $ADUser.Email } else { "user@example.com" } }
+            if (-not $Email) { $Email = if ($ADUser.Email) { $ADUser.Email } else { "uzrg@github.com" } }
         }
     }
-
+    
     if ($Name -and $Name -ne $CurrentName) {
         git config --global user.name $Name
         Write-Status "Set Git user.name: $Name" Success
@@ -290,7 +290,7 @@ function Set-GitConfig {
         git config --global user.email $Email
         Write-Status "Set Git user.email: $Email" Success
     }
-
+    
     git config --global init.defaultBranch main
     git config --global pull.rebase false
     git config --global core.autocrlf true
@@ -298,25 +298,25 @@ function Set-GitConfig {
 
 function Invoke-RepoCloning {
     if ($SkipRepos) { return }
-
+    
     Write-Status "Cloning repositories..."
     $OriginalLocation = Get-Location
-
+    
     try {
         Set-Location $Config.DevOpsPath
-
+        
         foreach ($Repo in $Config.Repos) {
             $RepoPath = Join-Path -Path $Config.DevOpsPath -ChildPath $Repo.Name
             if (Test-Path $RepoPath) {
                 Write-Status "Repository $($Repo.Name) already exists"
                 continue
             }
-
+            
             try {
                 $null = git clone $Repo.Url 2>&1
                 if ($LASTEXITCODE -eq 0) {
                     Write-Status "Cloned: $($Repo.Name)" Success
-
+                    
                     # Special handling for Jekyll repositories
                     if ($Repo.Name -eq 'jekyll-theme-chirpy') {
                         Show-JekyllSetupInstructions $RepoPath
@@ -366,7 +366,7 @@ Next steps for Jekyll development:
     }
 }
 
-function Show-SSHHelp($Email = "user@example.com") {
+function Show-SSHHelp($Email = "your-email@example.com") {
     Write-Host @"
 SSH SETUP INSTRUCTIONS:
 
@@ -375,7 +375,7 @@ SSH SETUP INSTRUCTIONS:
 
 2. START SSH AGENT (PowerShell):
    Start-Service ssh-agent
-
+   
    OR manually:
    `$sshAgent = ssh-agent; `$sshAgent | Invoke-Expression
 
@@ -399,33 +399,40 @@ function Show-GitCheatSheet {
 
 GIT ESSENTIALS CHEAT SHEET
 
+CONFIGURATION:
+  git config --global user.name "Your Name"        ? Set global username
+  git config --global user.email "your@email.com"  ? Set global email
+  git config --global core.autocrlf true           ? Handle line endings (Windows)
+  git config --global init.defaultBranch main      ? Set default branch name
+  git config --global pull.rebase false            ? Disable auto-rebase
+
 BASIC WORKFLOW:
-  git init                     → Initialize new repository
-  git clone <url>              → Clone a repository
-  git add <file>               → Stage changes
-  git commit -m "message"      → Commit staged changes
-  git push                     → Push to remote repository
-  git pull                     → Update from remote
+  git init                     ? Initialize new repository
+  git clone <url>              ? Clone a repository
+  git add <file>               ? Stage changes
+  git commit -m "message"      ? Commit staged changes
+  git push                     ? Push to remote repository
+  git pull                     ? Update from remote
 
 BRANCHING:
-  git branch                   → List branches
-  git branch <name>            → Create new branch
-  git checkout <branch>        → Switch branches
-  git merge <branch>           → Merge branches
+  git branch                   ? List branches
+  git branch <name>            ? Create new branch
+  git checkout <branch>        ? Switch branches
+  git merge <branch>           ? Merge branches
 
 UNDOING CHANGES:
-  git reset --hard HEAD        → Discard all local changes
-  git revert <commit>          → Create undo commit
+  git reset --hard HEAD        ? Discard all local changes
+  git revert <commit>          ? Create undo commit
 
 SSH OPERATIONS:
-  ssh-keygen -t rsa -b 4096    → Generate SSH key
-  Start-Service ssh-agent      → Start SSH agent (PowerShell)
-  ssh-add ~/.ssh/id_rsa        → Add SSH key to agent
+  ssh-keygen -t rsa -b 4096    ? Generate SSH key
+  Start-Service ssh-agent      ? Start SSH agent (PowerShell)
+  ssh-add ~/.ssh/id_rsa        ? Add SSH key to agent
 
 JEKYLL DEVELOPMENT:
-  bundle install               → Install Jekyll dependencies
-  bundle exec jekyll serve     → Start local development server
-  bundle exec jekyll build     → Build static site
+  bundle install               ? Install Jekyll dependencies
+  bundle exec jekyll serve     ? Start local development server
+  bundle exec jekyll build     ? Build static site
 
 RESOURCES:
   • Git Book: https://git-scm.com/book/en/v2
@@ -438,23 +445,23 @@ RESOURCES:
 
 function Show-Summary($Apps) {
     Set-Location $Config.DevOpsPath
-
+    
     $repoList = if (Test-Path $Config.DevOpsPath) {
         (Get-ChildItem -Directory -Path $Config.DevOpsPath).Name | ForEach-Object { "- $_" }
     } else { "None" }
-
+    
     $rubyStatus = if ($Apps.Ruby.Found) {
         "Ruby $($Apps.Ruby.Version)"
     } else {
         "Not installed"
     }
-
+    
     $jekyllStatus = if ($Apps.Jekyll -and $Apps.Jekyll.Found) {
         "Jekyll $($Apps.Jekyll.Version)"
     } else {
         "Not installed"
     }
-
+    
     Write-Host @"
 DEVOPS ENVIRONMENT SETUP COMPLETE
 
@@ -486,7 +493,7 @@ try {
     if (-not (Get-Alias GitCheatSheet -ErrorAction SilentlyContinue)) {
         Set-Alias -Name GitCheatSheet -Value Show-GitCheatSheet -Scope Global
     }
-
+    
     Write-Status "Setup completed successfully!" Success
 }
 catch {
